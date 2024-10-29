@@ -10,7 +10,7 @@ class GoalController extends Controller
 {
     public function index()
     {
-        $goals = Goal::where('user_id', Auth::id())->get();
+        $goals = Goal::where('user_id', 1)->get();
         return view('goals.index', compact('goals'));
     }
 
@@ -31,7 +31,8 @@ class GoalController extends Controller
         ]);
 
         Goal::create([
-            'user_id' => Auth::id(),
+            //'user_id' => Auth::id(),
+            'user_id' => 1,
             'target_hours' => $request->target_hours,
         ]);
 
@@ -58,7 +59,7 @@ class GoalController extends Controller
 
     public function destroy(Goal $goal)
     {
-        $goal->delete();
+        $goal->forceDelete(); // Permanently deletes the record
         return redirect()->route('goals.index')->with('success', 'Goal deleted successfully!');
     }
 }
