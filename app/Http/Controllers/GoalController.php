@@ -58,8 +58,8 @@ class GoalController extends Controller
         $suggestedTimeGoal = ceil($averageMovingTime * 1.1); // 10% increase for the goal
 
         return view('goals.create', [
-            'averageDistance' => round($averageDistance, 2), // Rounded for better presentation
-            'averageMovingTime' => round($averageMovingTime, 2),
+            'averageDistance' => round($averageDistance, 1), // Rounded for better presentation
+            'averageMovingTime' => round($averageMovingTime, 1),
             'suggestedDistanceGoal' => $suggestedDistanceGoal,
             'suggestedTimeGoal' => $suggestedTimeGoal,
         ]);

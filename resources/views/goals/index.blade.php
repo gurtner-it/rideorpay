@@ -15,6 +15,13 @@
             <a href="{{ route('goals.create') }}" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mb-4">
                 Add New Goal
             </a>
+            <a href="{{ route('rides.import') }}" class="bg-blue-500 text-white px-6 py-2 ml-2 rounded hover:bg-blue-600 mb-4">
+                Import rides
+            </a>
+
+            <a href="{{ route('rides.index') }}" class="bg-blue-500 text-white px-6 py-2 ml-2 rounded hover:bg-blue-600 mb-4">
+                Show rides
+            </a>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
                 @foreach($goals as $goal)
                     <div class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">

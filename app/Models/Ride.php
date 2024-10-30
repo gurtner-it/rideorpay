@@ -33,7 +33,7 @@ class Ride extends Model
     /// Accessor for formatted distance
     public function getFormattedDistanceAttribute()
     {
-        return round($this->distance / 1000, 2) . ' km'; // Convert to km and round
+        return round($this->distance / 1000, 1) . ' km'; // Convert to km and round
     }
 
     // Accessor for formatted elevation gain
