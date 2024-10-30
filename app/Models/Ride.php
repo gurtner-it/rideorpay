@@ -28,12 +28,24 @@ class Ride extends Model
         'start_date' => 'datetime',
     ];
 
-    /**
-     * Get distance in kilometers (converts from meters if necessary)
-     */
-    public function getDistanceInKilometersAttribute()
+    
+
+    /// Accessor for formatted distance
+    public function getFormattedDistanceAttribute()
     {
-        return $this->distance / 1000;
+        return round($this->distance / 1000, 2) . ' km'; // Convert to km and round
+    }
+
+    // Accessor for formatted elevation gain
+    public function getFormattedElevationGainAttribute()
+    {
+        return round($this->elevation_gain) . ' m'; // Round elevation gain
+    }
+
+    // Accessor for formatted start date
+    public function getFormattedStartDateAttribute()
+    {
+        return $this->start_date->format('d.m.Y H:i'); // Format date
     }
 
     /**

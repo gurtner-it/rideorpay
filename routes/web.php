@@ -11,7 +11,9 @@ Route::delete('/goals/{goal}', [GoalController::class, 'destroy'])->name('goals.
 Route::get('/strava', [RideController::class, 'showConnectPage'])->name('strava.connect');
 Route::get('/strava/redirect', [RideController::class, 'redirectToStrava'])->name('strava.redirect');
 Route::get('/strava/callback', [RideController::class, 'handleStravaCallback'])->name('strava.callback');
+
 Route::get('/rides/import', [RideController::class, 'importRides'])->name('rides.import');
+Route::get('/rides', [RideController::class, 'index'])->name('rides.index');
 
 
 
