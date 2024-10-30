@@ -53,9 +53,12 @@ class GoalController extends Controller
         $averageDistance = $totalWeeks > 0 ? $totalDistance / 1000 / $totalWeeks : 0; // Average in kilometers
         $averageMovingTime = $totalWeeks > 0 ? ($totalMovingTime / 3600) / $totalWeeks : 0; // Convert to hours and then average
 
+        $averageMovingTime = 2;
+
         // Suggest a goal based on average distance and time
         $suggestedDistanceGoal = ceil($averageDistance * 1.1); // 10% increase for the goal
         $suggestedTimeGoal = ceil($averageMovingTime * 1.1); // 10% increase for the goal
+
 
         return view('goals.create', [
             'averageDistance' => round($averageDistance, 1), // Rounded for better presentation
