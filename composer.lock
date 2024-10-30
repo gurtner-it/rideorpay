@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ead3b2177c9b5a65c881df95022c6f23",
+    "content-hash": "dd617ca70ef52d96e1af295ce4221d02",
     "packages": [
         {
             "name": "brick/math",
@@ -134,6 +134,61 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "codetoad/strava",
+            "version": "dev-l11-compatibility",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-shift/laravel-strava.git",
+                "reference": "11a00f3284fdf78fbafe42ed486b9faf2542b115"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-shift/laravel-strava/zipball/11a00f3284fdf78fbafe42ed486b9faf2542b115",
+                "reference": "11a00f3284fdf78fbafe42ed486b9faf2542b115",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3|^7.0.1|^7.2",
+                "illuminate/support": "5.5.*|5.6.*|5.7.*|5.8.*|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CodeToad\\Strava\\StravaServiceProvider"
+                    ],
+                    "aliases": {
+                        "Strava": "CodeToad\\Strava\\StravaFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CodeToad\\Strava\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Richie McMullen",
+                    "email": "richiemcmullen007@gmail.com"
+                }
+            ],
+            "description": "A laravel package to access data from the Strava API.",
+            "support": {
+                "source": "https://github.com/laravel-shift/laravel-strava/tree/l11-compatibility"
+            },
+            "funding": [
+                {
+                    "type": "github",
+                    "url": "https://github.com/RichieMcMullen"
+                }
+            ],
+            "time": "2024-02-27T14:01:46+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -7892,7 +7947,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "codetoad/strava": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
