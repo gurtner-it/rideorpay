@@ -10,8 +10,8 @@
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
-        <header class="mb-4">
-            <h1 class="text-2xl font-bold"><a href="{{ route('goals.index') }}">RideOrPay</a></h1>
+        <header class="mb-4 pt-10">
+            <h1 class="text-2xl font-bold text"><a href="{{ route('goals.index') }}">RideOrPay</a></h1>
         </header>
 
         <main>
