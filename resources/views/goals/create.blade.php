@@ -5,8 +5,23 @@
 
     <!-- Goal Setting Wizard -->
     <div id="wizard" class="mt-4">
+
+        <!-- Step 0: Connect with Strava -->
+        <div id="step0" class="wizard-step p-6 bg-white rounded-lg text-center @if(session('strava_access_token')) hidden @endif">
+            <h2 class="text-2xl font-bold text-gray-900">Connect with Strava</h2>
+            
+            <!-- Current Average Display -->
+            <p class="text-gray-400 mb-10">
+                Import your rides to start...
+            </p>
+
+            <a href="{{ route('strava.redirect') }}" class="w-full max-w-md mx-auto block bg-orange-600 text-white py-2 rounded-lg text-center hover:bg-orange-700">
+                Connect to Strava
+            </a>
+        </div>
+
         <!-- Step 1: Set Weekly Goal -->
-        <div id="step1" class="wizard-step p-6 bg-white rounded-lg text-center">
+        <div id="step1" class="wizard-step p-6 bg-white rounded-lg text-center @if(!session('strava_access_token')) hidden @endif">
             <h2 class="text-2xl font-bold text-gray-900">🔥 Set Your Weekly Goal</h2>
             
             <!-- Current Average Display -->
@@ -32,6 +47,7 @@
 
             <!-- Navigation Buttons -->
             <div class="flex justify-center space-x-4 mt-6">
+                <button type="button" id="backToStep0" class="bg-gray-300 py-2 px-4 rounded-lg @if(session('strava_access_token')) hidden @endif">Back</button>
                 <button type="button" id="nextToStep2" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700">Next</button>
             </div>
         </div>
@@ -48,7 +64,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <!-- Brand 1 -->
                 <label class="block border rounded-lg overflow-hidden shadow-sm cursor-pointer transition-transform transform hover:scale-105 relative border-gray-300 ring-4 ring-transparent focus-within:ring-blue-500">
-                    <input type="radio" name="brand" value="brand1" class="hidden" onclick="updateSelected(this)">
+                    <input type="radio" name="brand" value="brand1" class="hidden" onclick="updateSelected(this, 'brand')">
                     <img src="https://logowik.com/content/uploads/images/specialized2163.jpg" alt="Brand 1" class="w-full h-32 object-cover">
                     <div class="p-2 bg-gray-50 text-center">
                         <p class="font-semibold text-gray-800">Specialized</p>
@@ -59,7 +75,7 @@
 
                 <!-- Brand 2 -->
                 <label class="block border rounded-lg overflow-hidden shadow-sm cursor-pointer transition-transform transform hover:scale-105 relative border-gray-300 ring-4 ring-transparent focus-within:ring-blue-500">
-                    <input type="radio" name="brand" value="brand2" class="hidden" checked onclick="updateSelected(this)">
+                    <input type="radio" name="brand" value="brand2" class="hidden" checked onclick="updateSelected(this, 'brand')">
                     <img src="https://www.kinderfahrradfinder.de/storage/app/media/OpenGraph/canyonlogosquare.png" alt="Brand 2" class="w-full h-32 object-cover">
                     <div class="p-2 bg-gray-50 text-center">
                         <p class="font-semibold text-gray-800">Canyon</p>
@@ -70,7 +86,7 @@
 
                 <!-- Brand 3 -->
                 <label class="block border rounded-lg overflow-hidden shadow-sm cursor-pointer transition-transform transform hover:scale-105 relative border-gray-300 ring-2 ring-transparent focus-within:ring-blue-500">
-                    <input type="radio" name="brand" value="brand3" class="hidden" onclick="updateSelected(this)">
+                    <input type="radio" name="brand" value="brand3" class="hidden" onclick="updateSelected(this, 'brand')">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMbW8r6UVXMwqb32lA3W2jiLvyhtkovepKxQ&s" alt="Brand 3" class="w-full h-32 object-cover">
                     <div class="p-2 bg-gray-50 text-center">
                         <p class="font-semibold text-gray-800">Rapha</p>
@@ -81,7 +97,7 @@
 
                 <!-- Brand 4 -->
                 <label class="block border rounded-lg overflow-hidden shadow-sm cursor-pointer transition-transform transform hover:scale-105 relative border-gray-300 ring-2 ring-transparent focus-within:ring-blue-500">
-                    <input type="radio" name="brand" value="brand4" class="hidden" onclick="updateSelected(this)">
+                    <input type="radio" name="brand" value="brand4" class="hidden" onclick="updateSelected(this, 'brand')">
                     <img src="https://logowik.com/content/uploads/images/castelli3837.logowik.com.webp" alt="Brand 4" class="w-full h-32 object-cover">
                     <div class="p-2 bg-gray-50 text-center">
                         <p class="font-semibold text-gray-800">Castelli</p>
@@ -93,7 +109,7 @@
 
             <div class="flex justify-center space-x-4 mt-6">
                 <button type="button" id="backToStep1" class="bg-gray-300 py-2 px-4 rounded-lg">Back</button>
-                <button type="button" id="nextToStep3" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Next</button>
+                <button type="button" id="nextToStep4" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Next</button>
             </div>
         </div>
 
@@ -144,8 +160,8 @@
             </div>
 
             <div class="flex justify-center space-x-4 mt-6">
-                <button type="button" id="backToStep2" class="bg-gray-300 py-2 px-4 rounded-lg">Back</button>
-                <button type="button" id="nextToStep4" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Next</button>
+                <button type="button" id="backToStep2old" class="bg-gray-300 py-2 px-4 rounded-lg">Back</button>
+                <button type="button" id="nextToStep4old" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Next</button>
             </div>
         </div>
 
@@ -161,7 +177,7 @@
                 </p>
             </div>
             <div class="flex justify-center space-x-4 mt-6">
-                <button type="button" id="backToStep3" class="bg-gray-300 py-2 px-4 rounded-lg">Back</button>
+                <button type="button" id="backToStep2" class="bg-gray-300 py-2 px-4 rounded-lg">Back</button>
                 <button type="button" id="reviewGoal" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Review Goal</button>
             </div>
         </div>
@@ -225,11 +241,10 @@
 
         const sliderValue = document.getElementById('sliderValue');
         const nextToStep2 = document.getElementById('nextToStep2');
-        const nextToStep3 = document.getElementById('nextToStep3');
         const nextToStep4 = document.getElementById('nextToStep4');
         const reviewGoal = document.getElementById('reviewGoal');
         const submitGoal = document.getElementById('submitGoal');
-        const backToIntro = document.getElementById('backToIntro');
+        const backToStep0 = document.getElementById('backToStep0');
         const backToStep1 = document.getElementById('backToStep1');
         const backToStep2 = document.getElementById('backToStep2');
         const backToStep3 = document.getElementById('backToStep3');
@@ -260,7 +275,11 @@
             }
 
             // Proceed to the next step if the donation amount is valid
-            showStep(2); // Show the second step
+            showStep(3); // Show the second step
+        });
+
+        backToStep0.addEventListener('click', function() {
+            showStep(0); // Show the first step in the wizard
         });
 
         backToStep1.addEventListener('click', function() {
@@ -269,10 +288,6 @@
 
         backToStep2.addEventListener('click', function() {
             showStep(2); // Show the second step again
-        });
-
-        nextToStep3.addEventListener('click', function() {
-            showStep(3); // Show the third step
         });
 
         nextToStep4.addEventListener('click', function() {
@@ -353,7 +368,7 @@
                 diff: targetHours - averageHours
             };
         }
-        
+
         function updateSelected(selected, type) {
             // Hide blue border for all options in the specified group
             document.querySelectorAll(`input[name="${type}"]`).forEach(input => {
@@ -372,12 +387,6 @@
 
         // Run once to set initial checked state on page load
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('input[name="charity"]').forEach(input => {
-                if (input.checked) {
-                    updateSelected(input, 'charity');
-                }
-            });
-
             document.querySelectorAll('input[name="brand"]').forEach(input => {
                 if (input.checked) {
                     updateSelected(input, 'brand');
