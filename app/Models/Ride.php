@@ -28,7 +28,13 @@ class Ride extends Model
         'start_date' => 'datetime',
     ];
 
-    
+    // Method to calculate actual hours for a given user and date range
+    public static function calculateActualHours($userId, $startDate, $endDate)
+    {
+        return self::where('user_id', $userId)
+            ->whereBetween('start_date', [$startDate, $endDate])
+            ->sum('moving_time'); // Convert seconds to hours
+    }
 
     /// Accessor for formatted distance
     public function getFormattedDistanceAttribute()

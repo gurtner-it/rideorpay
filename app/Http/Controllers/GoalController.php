@@ -12,8 +12,38 @@ class GoalController extends Controller
 {
     public function index()
     {
-        $goals = Goal::where('user_id', 1)->get();
-        return view('goals.index', compact('goals'));
+        // Get the authenticated user
+        //$user = auth()->user();
+
+        // Fetch active goal for the user
+        $activeGoal = Goal::where('user_id', 1)
+                          ->where('met', false) // Get only unfulfilled goals
+                          ->first();
+
+        // Fetch archived goals for the user
+        $archivedGoals = Goal::where('user_id', 1)
+                             ->where('met', true) // Get only fulfilled goals
+                             ->get();
+
+        // Initialize variables for days and hours
+        $remainingDays = 0;
+        $remainingHours = 0;
+        $actualHours = 0;
+        $actualMinutes = 0;
+
+        // Calculate remaining time for the active goal
+        if ($activeGoal) {
+            $remainingDays = floor(\Carbon\Carbon::now()->diffInDays($activeGoal->verification_date));
+            $remainingHours = \Carbon\Carbon::now()->diffInHours($activeGoal->verification_date) % 24; // Get remaining hours after full days
+
+            // Calculate actual hours from rides within the goal's verification period
+            $actualTimeInSeconds = Ride::calculateActualHours(1, date('Y-m-d h:i:s'), $activeGoal->verification_date);
+            // Calculate hours and minutes
+            $actualHours = floor($actualTimeInSeconds / 3600); // Total hours
+            $actualMinutes = floor(($actualTimeInSeconds % 3600) / 60); // Remaining minutes
+        }
+
+        return view('goals.index', compact('archivedGoals', 'activeGoal', 'remainingDays', 'remainingHours', 'actualHours', 'actualMinutes'));
     }
 
     public function create()
@@ -75,15 +105,24 @@ class GoalController extends Controller
 
     public function store(Request $request)
     {
+        /*
         $request->validate([
             'target_hours' => 'required|integer',
+            'brand' => 'required|string',
+            'discount_amount' => 'required|numeric|min:0',
+            'penalty_amount' => 'required|numeric|min:10', // Assuming a minimum penalty of 10 CHF
         ]);
+        */
 
-        Goal::create([
-            //'user_id' => Auth::id(),
-            'user_id' => 1,
-            'target_hours' => $request->target_hours,
-        ]);
+        $goal = new Goal();
+        $goal->user_id = 1;
+        $goal->target_hours = $request->input('final_target_hours');
+        $goal->actual_hours = 0;
+        $goal->brand = $request->input('brand');
+        $goal->discount_amount = $request->input('discount_amount');
+        $goal->penalty_amount = $request->input('penalty_amount');
+        $goal->verification_date = now()->addWeek(); // Set verification date to one week from now
+        $goal->save();
 
         return redirect()->route('goals.index')->with('success', 'Goal created successfully!');
     }

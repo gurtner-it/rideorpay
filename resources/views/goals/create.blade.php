@@ -165,31 +165,61 @@
             </div>
         </div>
 
-
         <div id="step4" class="wizard-step p-6 bg-white rounded-lg text-center hidden">
-            <h2 class="text-2xl font-bold text-gray-900">💖 Ready to Give? Enter Your Donation!</h2>
+            <h2 class="text-2xl font-bold text-gray-900">What If You Fail? 🤔</h2>
+            <p class="text-gray-400 mb-6">
+                If you don’t reach your goal, the amount you choose here will be deducted. So, make it count – choose an amount that will motivate you to keep those pedals moving!
+            </p>
+            
             <div class="mb-4">
-                <input type="number" name="donation_amount" id="donation_amount" value="10" min="10" class="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="Enter donation amount" required />
-                <p class="text-gray-600 mt-1 font-medium">
-                    💖 Ready to make a difference? Enter your donation amount (minimum <strong>10 CHF</strong>)! 
-                    <br>
-                    *Only if you don’t meet your challenge! Let's keep it fun and motivating!*
+                <label for="penalty_amount" class="block text-gray-600 font-medium mb-1">
+                    Set Your Penalty Amount:
+                </label>
+                <input type="number" name="penalty_amount" id="penalty_amount" value="10" min="10" class="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="Enter penalty amount" required />
+                <p class="text-gray-600 mt-1">
+                    ⚠️ Enter your penalty amount (minimum <strong>10 CHF</strong>) that will be charged if you fall short of your challenge. Let’s make it fun and keep you motivated!
                 </p>
             </div>
+            
             <div class="flex justify-center space-x-4 mt-6">
                 <button type="button" id="backToStep2" class="bg-gray-300 py-2 px-4 rounded-lg">Back</button>
                 <button type="button" id="reviewGoal" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Review Goal</button>
             </div>
         </div>
 
-        <div id="reviewStep" class="wizard-step hidden">
+        <div id="step5" class="wizard-step p-6 bg-white rounded-lg text-center hidden">
             <h2 class="text-2xl font-bold text-gray-900">🎉 Review Your Goal! 🎉</h2>
-            <p class="text-gray-500 mb-10">Step 4: Here are your exciting goal details:</p>
-            <p><strong>Target Hours:</strong> <span id="reviewHours"></span></p>
-            <p><strong>Selected Charity:</strong> <span id="reviewCharity"></span></p>
-            <p><strong>Donation Amount:</strong> <span id="reviewPenalty"></span></p>
-            <p class="mt-2 text-sm text-gray-500">*You’re making a difference! Your donation helps support a great cause!* 💖</p>
-            <p class="font-semibold text-gray-800 mt-2">🛍️ Exclusive Offer from <strong>Your Favorite Brand</strong>: Enjoy a special discount when you complete your goal!</p>
+            <p class="text-gray-400 mb-6">
+                Confirm your exciting goal and set up your penalty amount. You’re almost ready to ride!
+            </p>
+            
+            <!-- Goal Summary -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                <p class="text-gray-800"><strong>Target Hours:</strong> <span id="reviewHours"></span></p>
+                <p class="text-gray-800"><strong>Selected Brand Offer:</strong> <span id="reviewBrand"></span></p>
+                <p class="text-gray-800"><strong>Penalty Amount:</strong> <span id="reviewPenalty"></span></p>
+                <p class="mt-2 text-sm text-gray-500">*Remember, this amount will only be charged if you don’t complete your goal.*</p>
+            </div>
+
+            
+            <!-- Credit Card Payment Mockup -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm mt-4">
+                <label for="cc_number" class="block text-gray-600 font-medium mb-1">
+                    Credit Card Information
+                </label>
+                <input type="text" name="cc_number" id="cc_number" class="block w-full border border-gray-300 rounded-md p-2 mb-2" placeholder="Card Number" required />
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" name="cc_expiry" id="cc_expiry" class="border border-gray-300 rounded-md p-2" placeholder="MM/YY" required />
+                    <input type="text" name="cc_cvc" id="cc_cvc" class="border border-gray-300 rounded-md p-2" placeholder="CVC" required />
+                </div>
+                
+                <p class="text-gray-500 text-sm mt-2">
+                    Your card will only be charged if you fall short of your goal. Ride on and keep the fee away!
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
             <div class="flex justify-center space-x-4 mt-6">
                 <button type="button" id="backToStep3" class="bg-gray-300 py-2 px-4 rounded-lg hover:bg-gray-400">Back</button>
                 <button type="submit" id="submitGoal" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Confirm My Goal!</button>
@@ -199,8 +229,10 @@
 
     <form action="{{ route('goals.store') }}" method="POST" id="goalForm" class="hidden">
         @csrf
-        <input type="hidden" name="target_hours" id="finalTargetHours">
-        <input type="hidden" name="charity" id="finalCharity">
+        <input type="hidden" name="final_target_hours" id="finalTargetHours">
+        <input type="hidden" name="brand" id="finalBrand">
+        <input type="hidden" name="discount_amount" id="finalDiscount">
+        <input type="hidden" name="penalty_amount" id="finalPenalty">
     </form>
 
     <script>
@@ -246,7 +278,6 @@
         const submitGoal = document.getElementById('submitGoal');
         const backToStep0 = document.getElementById('backToStep0');
         const backToStep1 = document.getElementById('backToStep1');
-        const backToStep2 = document.getElementById('backToStep2');
         const backToStep3 = document.getElementById('backToStep3');
 
         const introStep = document.getElementById('introStep');
@@ -287,11 +318,11 @@
         });
 
         backToStep2.addEventListener('click', function() {
-            showStep(2); // Show the second step again
+            showStep(3); // Show the second step again
         });
 
         nextToStep4.addEventListener('click', function() {
-            showStep(4); // Show the third step
+            showStep(5); // Show the third step
         });
 
 
@@ -300,17 +331,17 @@
             document.getElementById('reviewHours').innerText = targetHoursInput.value + ' hours';
 
             // Get the selected charity from the radio buttons
-            const selectedCharity = document.querySelector('input[name="charity"]:checked');
+            const selectedBrand = document.querySelector('input[name="brand"]:checked');
             
             // Check if a charity is selected and retrieve the charity name
-            document.getElementById('reviewCharity').innerText = selectedCharity ? 
-                selectedCharity.closest('label').querySelector('.p-2 > p.font-semibold').innerText : 'None';
+            document.getElementById('reviewBrand').innerText = selectedBrand ? 
+                selectedBrand.closest('label').querySelector('.p-2 > p.font-semibold').innerText : 'None';
 
             // Get the donation amount
-            document.getElementById('reviewPenalty').innerText = document.getElementById('donation_amount').value + ' CHF';
+            document.getElementById('reviewPenalty').innerText = document.getElementById('penalty_amount').value + ' CHF';
 
             // Show the review step
-            showStep(4); 
+            showStep(6); 
         });
 
         backToStep3.addEventListener('click', function() {
@@ -318,9 +349,13 @@
         });
 
         submitGoal.addEventListener('click', function() {
-            document.getElementById('finalTargetHours').value = targetHoursInput.value;
-            document.getElementById('finalCharity').value = document.getElementById('charity').value;
-            document.getElementById('goalForm').submit(); // Submit the form
+            // Assign values to hidden form fields
+            document.getElementById('finalTargetHours').value = document.getElementById('target_hours').value;
+            document.getElementById('finalBrand').value = document.querySelector('input[name="brand"]:checked'); // Assuming brand is selected from charity options
+            document.getElementById('finalPenalty').value = document.getElementById('penalty_amount').value;
+
+            // Submit the form
+            document.getElementById('goalForm').submit();
         });
 
         function calculateDiscount(averageHours, targetHours) {
@@ -360,6 +395,8 @@
 
             // Cap discount at 50%
             discountPercentage = Math.min(discountPercentage, 50);
+            
+            document.getElementById('finalDiscount').value = discountPercentage;
 
             // Return the final discount and the rider's level for display
             return {
