@@ -25,15 +25,16 @@
             @if ($actualHours >= $activeGoal->target_hours)
                 <div class="bg-green-100 text-green-700 p-4 rounded mb-4">
                     <strong>🎉 Congratulations!</strong> You've successfully achieved your goal of {{ $activeGoal->target_hours }} hours!
+
+                    <!-- Button to Get Discount -->
+                    <div class="mt-4">
+                        <a href="{{ route('discount.claim', $activeGoal->brand) }}" 
+                           class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                            Claim Your Discount!
+                        </a>
+                    </div>
                 </div>
-                    
-                <!-- Button to Get Discount -->
-                <div class="mt-4">
-                    <a href="{{ route('discount.claim', $activeGoal->brand) }}" 
-                       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                        Claim Your Discount!
-                    </a>
-                </div>
+
             @endif
 
             <h2 class="text-2xl font-semibold text-blue-700">🎯 Current Goal</h2>
@@ -48,15 +49,18 @@
                         style="width: {{ min(($actualHours / $activeGoal->target_hours) * 100, 100) }}%">
                     </div>
                 </div>
+
                 <p class="text-gray-600 text-sm mt-2">Progress: {{ round(($actualHours / $activeGoal->target_hours) * 100) }}%</p>
             </div>
 
-            <!-- Countdown -->
-            <div class="mt-4">
-                <p class="text-gray-600">
-                    🕒 <strong>{{ $remainingDays }}</strong> days and <strong>{{ $remainingHours }}</strong> hours left to achieve this goal!
-                </p>
-            </div>
+            @if ($actualHours < $activeGoal->target_hours)
+                <!-- Countdown -->
+                <div class="mt-4">
+                    <p class="text-gray-600">
+                        🕒 <strong>{{ $remainingDays }}</strong> days and <strong>{{ $remainingHours }}</strong> hours left to achieve this goal!
+                    </p>
+                </div>
+            @endif
 
         </div>
     @else

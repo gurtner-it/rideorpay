@@ -6,16 +6,12 @@ use Illuminate\Http\Request;
 use Strava;
 use Carbon\Carbon;
 use App\Models\Ride; // Assuming you have a Ride model
+use App\Models\User; // Assuming you have a Ride model
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
 class RideController extends Controller
 {
-    public function showConnectPage()
-    {
-        return view('strava');
-    }
-
-
     public function index()
     {
         $rides = Ride::where('user_id', Null)->get();
@@ -37,7 +33,7 @@ class RideController extends Controller
 
         return redirect("{$stravaUrl}?{$queryParams}");
     }
-
+    
     /**
      * Handle the OAuth callback from Strava.
      */
@@ -48,6 +44,7 @@ class RideController extends Controller
             return redirect()->route('strava.redirect')->with('error', 'Authorization failed.');
         }
 
+        // Exchange the authorization code for an access token
         $response = Http::post('https://www.strava.com/oauth/token', [
             'client_id' => env('STRAVA_CLIENT_ID'),
             'client_secret' => env('STRAVA_CLIENT_SECRET'),
@@ -58,11 +55,44 @@ class RideController extends Controller
         $data = $response->json();
 
         if (isset($data['access_token'])) {
+            // Retrieve user data from Strava
+            $stravaUser = $this->getStravaUser($data['access_token']);
+
+            $user = User::where('email', $stravaUser['username'])->first();
+
+            if (!$user) {
+                        // Check if the user already exists or create a new user
+                        $user = User::firstOrCreate(
+                            ['id' => $stravaUser['id']], // Assuming you have a 'strava_id' column
+                            [
+                                'name' => $stravaUser['firstname'] . ' ' . $stravaUser['lastname'],
+                                'password' => 123456,
+                                'email' => $stravaUser['username'],
+                                'avatar' => $stravaUser['profile_medium'],
+                                'strava_access_token' => $data['access_token'],
+                            ]
+                        );
+            }
+            
+            // Log the user in
+            Auth::login($user, true);
+
+            // Optionally store the access token in the session
             session(['strava_access_token' => $data['access_token']]);
+            
             return redirect()->route('rides.import')->with('success', 'Connected to Strava!');
         }
 
         return redirect()->route('strava.redirect')->with('error', 'Failed to get access token.');
+    }
+
+    /**
+     * Get user data from Strava using the access token.
+     */
+    protected function getStravaUser($accessToken)
+    {
+        $response = Http::withToken($accessToken)->get('https://www.strava.com/api/v3/athlete');
+        return $response->json();
     }
 
 
